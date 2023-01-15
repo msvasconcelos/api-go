@@ -221,3 +221,25 @@ func getID(r *http.Request) (int, error) {
 	}
 	return id, nil
 }
+
+//type Handler interface {
+//	ServeHTTP(w http.ResponseWriter, r *http.Request)
+//}
+
+func ServidorJogador(w http.ResponseWriter, r *http.Request) {
+	jogador := r.URL.Path[len("/jogadores/"):]
+
+	fmt.Fprint(w, ObterPontuacaoJogador(jogador))
+}
+
+func ObterPontuacaoJogador(nome string) string {
+	if nome == "Maria" {
+		return "20"
+	}
+
+	if nome == "Pedro" {
+		return "10"
+	}
+
+	return ""
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -16,4 +17,9 @@ func main() {
 
 	server := NewAPIServer(":3000", store)
 	server.Run()
+
+	tratador := http.HandlerFunc(ServidorJogador)
+	if err := http.ListenAndServe(":5000", tratador); err != nil {
+		log.Fatalf("não foi possível escutar na porta 5000 %v", err)
+	}
 }
