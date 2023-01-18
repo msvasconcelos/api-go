@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+type ArmazenamentoJogadorEmMemoria struct{}
+
+func (a *ArmazenamentoJogadorEmMemoria) ObterPontuacaoJogador(nome string) int {
+	return 123
+}
+
 func main() {
 	store, err := NewPostgresStore()
 	if err != nil {
@@ -15,11 +21,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := NewAPIServer(":3000", store)
-	server.Run()
+	//server := NewAPIServer(":3000", store)
+	//server.Run()
 
-	tratador := http.HandlerFunc(ServidorJogador)
-	if err := http.ListenAndServe(":5000", tratador); err != nil {
+	servidor := &ServidorJogador{&ArmazenamentoJogadorEmMemoria{}}
+
+	if err := http.ListenAndServe(":5000", servidor); err != nil {
 		log.Fatalf("não foi possível escutar na porta 5000 %v", err)
 	}
 }

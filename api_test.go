@@ -10,20 +10,28 @@ import (
 )
 
 func TestObterJogadores(t *testing.T) {
-	t.Run("retornar resultado de Maria", func(t *testing.T) {
+	armazenamento := EsbocoArmazenamentoJogador{
+		map[string]int{
+			"Maria": 20,
+			"Pedro": 10,
+		},
+	}
+	servidor := &ServidorJogador{&armazenamento}
+
+	t.Run("retorna pontuacao de Maria", func(t *testing.T) {
 		requisicao := novaRequisicaoObterPontuacao("Maria")
 		resposta := httptest.NewRecorder()
 
-		ServidorJogador(resposta, requisicao)
+		servidor.ServeHTTP(resposta, requisicao)
 
 		verificarCorpoRequisicao(t, resposta.Body.String(), "20")
 	})
 
-	t.Run("returns Pedro's score", func(t *testing.T) {
+	t.Run("retorna pontuacao de Pedro", func(t *testing.T) {
 		requisicao := novaRequisicaoObterPontuacao("Pedro")
 		resposta := httptest.NewRecorder()
 
-		ServidorJogador(resposta, requisicao)
+		servidor.ServeHTTP(resposta, requisicao)
 
 		verificarCorpoRequisicao(t, resposta.Body.String(), "10")
 	})
@@ -46,7 +54,7 @@ func TestMeuCrud(t *testing.T) {
 		requisicao, _ := http.NewRequest(http.MethodGet, "/account", nil)
 		resposta := httptest.NewRecorder()
 
-		os.Setenv("Pass", "msv110496")
+		os.Setenv("Pass", "<your password>")
 		store, err := NewPostgresStore()
 		if err != nil {
 			log.Fatal(err)
@@ -62,4 +70,13 @@ func TestMeuCrud(t *testing.T) {
 		fmt.Println(get)
 
 	})
+}
+
+type EsbocoArmazenamentoJogador struct {
+	pontuacoes map[string]int
+}
+
+func (e *EsbocoArmazenamentoJogador) ObterPontuacaoJogador(nome string) int {
+	pontuacao := e.pontuacoes[nome]
+	return pontuacao
 }

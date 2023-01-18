@@ -226,20 +226,15 @@ func getID(r *http.Request) (int, error) {
 //	ServeHTTP(w http.ResponseWriter, r *http.Request)
 //}
 
-func ServidorJogador(w http.ResponseWriter, r *http.Request) {
-	jogador := r.URL.Path[len("/jogadores/"):]
-
-	fmt.Fprint(w, ObterPontuacaoJogador(jogador))
+type ArmazenamentoJogador interface {
+	ObterPontuacaoJogador(nome string) int
 }
 
-func ObterPontuacaoJogador(nome string) string {
-	if nome == "Maria" {
-		return "20"
-	}
+type ServidorJogador struct {
+	armazenamento ArmazenamentoJogador
+}
 
-	if nome == "Pedro" {
-		return "10"
-	}
-
-	return ""
+func (s *ServidorJogador) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	jogador := r.URL.Path[len("/jogadores/"):]
+	fmt.Fprint(w, s.armazenamento.ObterPontuacaoJogador(jogador))
 }
