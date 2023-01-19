@@ -21,8 +21,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//server := NewAPIServer(":3000", store)
-	//server.Run()
+	server := NewAPIServer(":3000", store)
+	server.Run()
 
 	servidor := &ServidorJogador{&ArmazenamentoJogadorEmMemoria{}}
 
