@@ -72,7 +72,7 @@ func TestMeuCrud(t *testing.T) {
 		fmt.Println(get)
 
 	})
-	t.Run("post", func(t *testing.T) {
+	t.Run("create account", func(t *testing.T) {
 		values := map[string]string{"firstName": "foo2", "lastName": "baz2"}
 		jsonData, err := json.Marshal(values)
 		if err != nil {
@@ -97,7 +97,34 @@ func TestMeuCrud(t *testing.T) {
 		if resposta.Code != 200 {
 			t.Errorf("Status esperado: '%o' recebido '%o'", 200, resposta.Code)
 		}
+	})
 
+	t.Run("get id", func(t *testing.T) {
+
+		url := "localhost:3000/account/1"
+		method := "GET"
+
+		requisicao, _ := http.NewRequest(method, url, nil)
+		requisicao.Header.Add("x-jwt-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50TnVtYmVyIjo0OTgwODEsImV4cGlyZXNBdCI6MTUwMDB9.yHvaXox2WOQ1vWJ6dBsgjs7EkZbjr4TwmCqkRZ509Zo")
+		resposta := httptest.NewRecorder()
+
+		os.Setenv("Pass", "<yourPass>")
+		store, err := NewPostgresStore()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if err := store.Init(); err != nil {
+			log.Fatal(err)
+		}
+		server := NewAPIServer(":3000", store)
+
+		//server.Run()
+		server.handleGetAccountByID(resposta, requisicao)
+
+		if resposta.Code != 200 {
+			t.Errorf("Status esperado: '%o' recebido '%o'", 200, resposta.Code)
+		}
 	})
 }
 
